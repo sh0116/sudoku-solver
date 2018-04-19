@@ -1,21 +1,12 @@
-cmake_minimum_required(VERSION 2.8.8)
+include_directories(${CMAKE_SOURCE_DIR}/src/inc ${CATCH_INCLUDE_DIR})
 
-project(fast_sudoku_solver)
+add_executable(sudokuTest allTest.cpp bitUtilsTest.cpp boardDataTest.cpp
+    boardTest.cpp testData.cpp testUtils.cpp)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    set(CMAKE_CXX_FLAGS "-Wall -O3 -std=gnu++11")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-Wall -O3 -std=c++11")
-endif()
+target_link_libraries(sudokuTest sudokuLib Catch)
 
-add_subdirectory(src)
-add_subdirectory(test)
-
-set(EXT_PROJECTS_DIR ${CMAKE_SOURCE_DIR}/external)
-
-set(CATCH_INCLUDE_DIR ${EXT_PROJECTS_DIR}/catch)
-
-add_library(Catch INTERFACE)
-target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
-
-enable_testing(true)
+add_custom_command( TARGET sudokuTest
+POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E echo "Copying sudoku puzzles.."
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/test/data ${CMAKE_BINARY_DIR}
+)
