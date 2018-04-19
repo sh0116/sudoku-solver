@@ -1,12 +1,8 @@
-include_directories(${CMAKE_SOURCE_DIR}/src/inc ${CATCH_INCLUDE_DIR})
+include_directories(inc)
 
-add_executable(sudokuTest allTest.cpp bitUtilsTest.cpp boardDataTest.cpp
-    boardTest.cpp testData.cpp testUtils.cpp)
+set(SUDOKU_LIB_SRCS board.cpp boardData.cpp io.cpp misc.cpp
+    option.cpp)
 
-target_link_libraries(sudokuTest sudokuLib Catch)
+add_library(sudokuLib STATIC ${SUDOKU_LIB_SRCS})
 
-add_custom_command( TARGET sudokuTest
-POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E echo "Copying sudoku puzzles.."
-COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/test/data ${CMAKE_BINARY_DIR}
-)
+add_executable(sudoku ${SUDOKU_LIB_SRCS} main.cpp)
